@@ -121,6 +121,20 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
     (movie) => movie.imdbID === selectedId
   )?.userRating;
 
+  useEffect(
+    function () {
+      function callBack(e) {
+        if (e.code === "Escape") onCloseMovie();
+      }
+      document.addEventListener("keydown", callBack);
+
+      return function () {
+        document.removeEventListener("keydown", callBack);
+      };
+    },
+    [onCloseMovie]
+  );
+
   const {
     Title: title,
     Year: year,
@@ -384,7 +398,6 @@ export default function App() {
           }
 
           const data = await res.json();
-          console.log(data);
           if (data.Response === "False") {
             throw new Error("Movie not found");
           }
@@ -405,6 +418,7 @@ export default function App() {
         return;
       }
 
+      handleCloseMovie();
       fetchMovies();
 
       return function () {
