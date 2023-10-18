@@ -363,7 +363,7 @@ export default function App() {
     return JSON.parse(storedValue);
   });
 
-  const { movies, isLoading, error } = useMovies(query, handleCloseMovie);
+  const { movies, isLoading, error } = useMovies(query/* , handleCloseMovie */);
 
   function handleSelectMovie(id) {
     setSelectedId((selectedId) => (id === selectedId ? null : id));
