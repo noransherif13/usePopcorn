@@ -3,6 +3,7 @@ import StarRating from "./StarRating";
 import { useRef } from "react";
 import { useMovies } from "./useMovies";
 import { useLocalStorage } from "./useLocalStorage.js";
+import { useKey } from "./appKey";
 
 const tempWatchedData = [
   {
@@ -33,21 +34,13 @@ const average = (arr) =>
 function SearchBar({ query, setQuery }) {
   const inputEl = useRef(null);
 
-  useEffect(
-    function () {
-      function callBack(e) {
-        if (document.activeElement === inputEl.current) return;
-        if (e.code === "Enter") {
-          inputEl.current.focus();
-          setQuery("");
-        }
-      }
+  useKey("Enter", function () {
+    if (document.activeElement === inputEl.current) return;
+    inputEl.current.focus();
+    setQuery("");
+  });
 
-      document.addEventListener("keydown", callBack);
-      return () => document.addEventListener("keydown", callBack);
-    },
-    [setQuery]
-  );
+  
 
   return (
     <input
@@ -119,20 +112,6 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
     (movie) => movie.imdbID === selectedId
   )?.userRating;
 
-  useEffect(
-    function () {
-      function callBack(e) {
-        if (e.code === "Escape") onCloseMovie();
-      }
-      document.addEventListener("keydown", callBack);
-
-      return function () {
-        document.removeEventListener("keydown", callBack);
-      };
-    },
-    [onCloseMovie]
-  );
-
   const {
     Title: title,
     Year: year,
@@ -159,6 +138,8 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
     onAddWatched(newWatchedMovie);
     onCloseMovie();
   }
+
+  useKey("Escape", onCloseMovie);
   useEffect(
     function () {
       setIsLoading(true);
